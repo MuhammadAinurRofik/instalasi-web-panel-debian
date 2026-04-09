@@ -23,15 +23,25 @@ sudo apt update && sudo apt upgrade -y
 ```bash
 sudo apt install nginx
 ```
-### 3. install PHP
+### 3. Install PHP (Multi-Version di Debian)
 Karena Anda menggunakan Nginx, kita tidak boleh menginstal paket php biasa (yang memicu instalasi Apache). Kita harus menginstal PHP-FPM (FastCGI Process Manager).
 Untuk versi yang paling stabil dan didukung penuh saat ini di lingkungan Ubuntu adalah PHP 8.3. (PHP 8.4 baru saja rilis dan sangat stabil, namun PHP 8.3 memiliki kompatibilitas modul yang lebih luas untuk saat ini).
 Berikut adalah langkah-langkah instalasinya:
-1. Tambahkan Repository PHP (Ondřej Surý)
-   Agar mendapatkan versi PHP yang paling update dan stabil di Ubuntu, gunakan repository PPA yang dikelola oleh pengembang PHP resmi untuk Debian/Ubuntu:
+1. Tambahkan Repository PHP (Ondřej Surý untuk Debian)
+   Agar mendapatkan versi PHP yang paling update dan stabil, gunakan repository PPA yang dikelola oleh pengembang PHP resmi untuk Debian/Ubuntu:
    
    ```bash
-   sudo add-apt-repository ppa:ondrej/php -y
+   # Update dan install dependensi sertifikat
+   sudo apt update
+   sudo apt install -y lsb-release ca-certificates apt-transport-https software-properties-common gnupg2
+   
+   # Unduh GPG Key resmi
+   sudo curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+   
+   # Tambahkan repositori ke sources list
+   echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/php.list
+   
+   # Update daftar paket
    sudo apt update
     ```
    
@@ -95,107 +105,53 @@ Berikut adalah langkah-langkah instalasinya:
    ```
 
 ### 4. install MYSQL
-bisa menggunakan tutorial di bawah ini ataupun tutorial dari video lainnya
+Karena menggunakan Debian 12, sangat disarankan untuk menggunakan MariaDB sebagai pengganti MySQL. MariaDB adalah sistem database default di Debian, sehingga proses instalasinya jauh lebih stabil dan tidak memerlukan konfigurasi repositori luar yang rumit.
 
-```bash
-https://www.youtube.com/watch?v=9z0pxkpWCJE&t=472s menit 2:47 - 4:46
-```
-
-Ringkasan videonya:
 1. jalankan perintah ini, dan tunggu hingga selesai
 
    ```bash
-   sudo apt install mysql-server -y
+   sudo apt update
+   sudo apt install mariadb-server -y
    ```
 
 2. kemudian cek apakah mysql sudah aktif atau belum
 
    ```bash
-   # cek status
-   sudo systemctl status mysql
-
-   # jika belum aktif jalankan ini
-   sudo systemctl start mysql
-   sudo systemctl enable mysql
+   # Cek apakah sudah aktif
+   sudo systemctl status mariadb
+   
+   # Jika belum aktif, jalankan ini
+   sudo systemctl start mariadb
+   sudo systemctl enable mariadb
    ```
 
 3. kemudian jalankan perintah ini
 
    ```bash
    sudo /usr/bin/mysql_secure_installation
-
-   # ikuti tahapan ini sampai selesai
-   Securing the MySQL server deployment.
-
-   Connecting to MySQL using a blank password.
-   
-   VALIDATE PASSWORD COMPONENT can be used to test passwords
-   and improve security. It checks the strength of password
-   and allows the users to set only those passwords which are
-   secure enough. Would you like to setup VALIDATE PASSWORD component?
-   
-   Press y|Y for Yes, any other key for No: n
-   
-   Skipping password set for root as authentication with auth_socket is used by default.
-   If you would like to use password authentication instead, this can be done with the "ALTER_USER" command.
-   See https://dev.mysql.com/doc/refman/8.0/en/alter-user.html#alter-user-password-management for more information.
-   
-   By default, a MySQL installation has an anonymous user,
-   allowing anyone to log into MySQL without having to have
-   a user account created for them. This is intended only for
-   testing, and to make the installation go a bit smoother.
-   You should remove them before moving into a production
-   environment.
-   
-   Remove anonymous users? (Press y|Y for Yes, any other key for No) : y
-   Success.
-   
-   
-   Normally, root should only be allowed to connect from
-   'localhost'. This ensures that someone cannot guess at
-   the root password from the network.
-   
-   Disallow root login remotely? (Press y|Y for Yes, any other key for No) : y
-   Success.
-   
-   By default, MySQL comes with a database named 'test' that
-   anyone can access. This is also intended only for testing,
-   and should be removed before moving into a production
-   environment.
-   
-   
-   Remove test database and access to it? (Press y|Y for Yes, any other key for No) : y
-    - Dropping test database...
-   Success.
-   
-    - Removing privileges on test database...
-   Success.
-   
-   Reloading the privilege tables will ensure that all changes
-   made so far will take effect immediately.
-   
-   Reload privilege tables now? (Press y|Y for Yes, any other key for No) : y
-   Success.
-   
-   All done!
    ```
+
+   Ikuti panduan berikut saat muncul pertanyaan:
+   - Enter current password for root: Tekan Enter (kosong).
+   - Switch to unix_socket authentication?: Pilih n.
+   - Change the root password?: Pilih y, lalu masukkan password root baru Anda.
+   - Remove anonymous users?: Pilih y.
+   - Disallow root login remotely?: Pilih y.
+   - Remove test database and access to it?: Pilih y.
+   - Reload privilege tables now?: Pilih y.
    
 ### 5. install phpmyadmin di nginx
-bisa menggunakan tutorial di bawah ini ataupun tutorial dari video lainnya
+Proses instalasi phpMyAdmin di Debian 12 secara garis besar hampir identik dengan Ubuntu.
 
-```bash
-https://www.youtube.com/watch?v=vqvRWI15q9A&t=388s menit 3:06 
-```
-
-Ringkasan Video:
 1. jalankan perintah ini untuk install phpmyadmin, dan tunggu hinngga selesai
    
    ```bash
+   sudo apt update
    sudo apt install phpmyadmin -y
    ```
 
 2. jika muncul "Configuring phpmyadmin" untuk memilih web server, jangan pilih apapun, langsung ok saja (Tab + enter), karna disini kita akan memakai nginx, dan di pilihan itu tidak ada nginx.
-3. jika muncul "Configuring phpmyadmin"
+3. jika muncul "Configuring phpmyadmin" mengenai dbconfig-common
 
    ```bash
       The phpmyadmin package must have a database installed and configured   │
@@ -425,7 +381,9 @@ Error ini terjadi karena phpMyAdmin mencoba menginstal Apache secara paksa sebag
 3. Restart Nginx:
 
    ```bash
+   sudo nginx -t
    sudo systemctl restart nginx
+   systemctl restart php8.x-fpm
    ```
 
    Sekarang coba akses melalui browser di http://IP_ADDRESS/phpmyadmin/.
@@ -441,11 +399,11 @@ Error ini terjadi karena phpMyAdmin mencoba menginstal Apache secara paksa sebag
    - Masuk ke MySQL terminal:
 
      ```bash
-     sudo mysql
+     sudo mariadb
      ```
 
    - Buat user baru (Contoh nama: admin):
-     Ganti 'PasswordKuat123!' dengan password yang diinginkan.
+     Ganti 'Admin123' dengan password yang diinginkan.
      
      ```bash
      CREATE USER 'admin'@'localhost' IDENTIFIED BY 'Admin123';
@@ -455,6 +413,7 @@ Error ini terjadi karena phpMyAdmin mencoba menginstal Apache secara paksa sebag
      
      ```bash
      GRANT ALL PRIVILEGES ON *.* TO 'admin'@'localhost' WITH GRANT OPTION;
+     ALTER USER 'admin'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('Admin123');
      ```
 
    - Refresh hak akses dan keluar:
@@ -470,25 +429,51 @@ Error ini terjadi karena phpMyAdmin mencoba menginstal Apache secara paksa sebag
      Password: Admin123 (sesuai password yang di buat)
 
 ### 6. install python
-1. Tambahkan Repository Python
+Debian 12 sudah menyertakan Python 3.11 sebagai versi bawaan sistem. Untuk versi lainnya, kita akan menggunakan kombinasi repositori resmi dan kompilasi manual agar aman.
+
+1. Install Python 3.11
 
    ```bash
-   sudo add-apt-repository ppa:deadsnakes/ppa -y
    sudo apt update
+   sudo apt install -y python3.11 python3.11-dev python3.11-venv python3-pip libmysqlclient-dev pkg-config build-essential
    ```
 
-2. Instal Python 3.10 dan Kelengkapannya
+2. Install Python 3.10 dan 3.12 (Kompilasi Manual / Altinstall)
 
    ```bash
-   sudo apt update && sudo apt install -y python3.10 python3.10-dev python3.10-venv python3-pip python3.10-distutils libmysqlclient-dev pkg-config
+   # Update dan Install Build Tools
+   sudo apt update
+   sudo apt install -y build-essential libssl-dev zlib1g-dev libbz2-dev \
+   libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
+   libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev
    ```
 
-3. Install Versi python tambahan untuk fitur multi version
+   ```bash
+   # --- PROSES UNTUK PYTHON 3.10 ---
+   cd /tmp
+   wget https://www.python.org/ftp/python/3.10.14/Python-3.10.14.tgz
+   tar -xf Python-3.10.14.tgz
+   cd Python-3.10.14
+   ./configure --enable-optimizations
+   make -j $(nproc)
+   sudo make altinstall
+   
+   # --- PROSES UNTUK PYTHON 3.12 ---
+   cd /tmp
+   wget https://www.python.org/ftp/python/3.12.2/Python-3.12.2.tgz
+   tar -xf Python-3.12.2.tgz
+   cd Python-3.12.2
+   ./configure --enable-optimizations
+   make -j $(nproc)
+   sudo make altinstall
+   ```
+
+3. Verifikasi Lokasi & Versi
 
    ```bash
-   sudo apt install -y \
-   python3.11 python3.11-dev python3.11-venv \
-   python3.12 python3.12-dev python3.12-venv python3.12-full
+   Python 3.10: python3.10 --version (Lokasi: /usr/local/bin/python3.10)
+   Python 3.11: python3.11 --version (Lokasi: /usr/bin/python3.11)
+   Python 3.12: python3.12 --version (Lokasi: /usr/local/bin/python3.12)
    ```
 
 ### 7. install composer
@@ -515,10 +500,10 @@ Error ini terjadi karena phpMyAdmin mencoba menginstal Apache secara paksa sebag
 
    Pastikan versi php itu konsisten, karena saat menginstal Composer, sistem mendeteksi adanya paket php (metapackage) yang lebih baru di repositori PPA Ondřej Surý yang di tambahkan sebelumnya. Karena PPA tersebut sangat up-to-date, versi PHP 8.5 (yang kemungkinan masih versi development atau baru rilis) otomatis ikut terambil sebagai dependensi terbaru. jika menggunakan php versi 8.3, maka hapus php versi terbarunya. 
 
-### 8. install unzip
+### 8. install unzip dan beberapa perintah yang diperlukan
 
 ```bash
-sudo apt install unzip zip curl -y
+sudo apt install unzip zip curl git -y
 ```
 
 ### 9. Konfigurasi Sudoers
@@ -532,7 +517,7 @@ sudo visudo
 Tambahkan di baris paling bawah:
 
 ```bash
-www-data ALL=(ALL) NOPASSWD: /usr/bin/mkdir, /usr/bin/cp, /usr/bin/unzip, /usr/bin/rm, /usr/bin/chown, /usr/bin/chmod, /usr/bin/mv, /usr/bin/ln, /usr/bin/systemctl, /usr/bin/php, /usr/bin/tail -n [0-9]* /var/log/nginx/*.log, /usr/bin/rm -f, /usr/bin/rm -rf /var/log/nginx/*, /usr/bin/rm -f /var/log/nginx/*, /usr/bin/python3.10, /usr/bin/pip, /usr/bin/touch, /usr/bin/tail, /usr/bin/bash, /usr/bin/systemctl reload nginx, /usr/bin/systemctl daemon-reload, /usr/bin/systemctl enable flask_*, /usr/bin/systemctl restart flask_*, /var/www/*/venv/bin/pip cache purge
+www-data ALL=(ALL) NOPASSWD: /usr/bin/mkdir, /usr/bin/cp, /usr/bin/unzip, /usr/bin/rm, /usr/bin/chown, /usr/bin/chmod, /usr/bin/mv, /usr/bin/ln, /usr/bin/systemctl, /usr/bin/php, /usr/bin/php8.2, /usr/bin/php8.3, /usr/bin/php8.4, /usr/bin/tail -n [0-9]* /var/log/nginx/*.log, /usr/bin/rm -f, /usr/bin/rm -rf /var/log/nginx/*, /usr/bin/python3.11, /usr/local/bin/python3.10, /usr/local/bin/python3.12, /usr/local/bin/pip3.10, /usr/local/bin/pip3.12, /usr/bin/pip, /usr/bin/touch, /usr/bin/tail, /usr/bin/bash, /usr/bin/systemctl reload nginx, /usr/bin/systemctl daemon-reload, /usr/bin/systemctl enable flask_*, /usr/bin/systemctl restart flask_*, /usr/bin/systemctl stop flask_*, /usr/bin/systemctl disable flask_*, /var/www/*/venv/bin/pip cache purge
 ```
 
 ### 10. Konfigurasi php.ini (Upload & Memory)
@@ -579,6 +564,9 @@ cd /var/www
 
 # Clone repository
 sudo git clone https://github.com/MuhammadAinurRofik/web-panel
+
+# memindahkan file web-panel.zip
+mv web-panel.zip ..
 
 # unzip file
 unzip web-panel.zip
