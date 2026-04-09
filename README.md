@@ -435,7 +435,7 @@ Debian 12 sudah menyertakan Python 3.11 sebagai versi bawaan sistem. Untuk versi
 
    ```bash
    sudo apt update
-   sudo apt install -y python3.11 python3.11-dev python3.11-venv python3-pip libmysqlclient-dev pkg-config build-essential
+   sudo apt install -y python3.11 python3.11-dev python3.11-venv python3-pip default-libmysqlclient-dev pkg-config build-essential
    ```
 
 2. Install Python 3.10 dan 3.12 (Kompilasi Manual / Altinstall)
