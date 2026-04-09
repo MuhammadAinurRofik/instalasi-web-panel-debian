@@ -423,7 +423,7 @@ Error ini terjadi karena phpMyAdmin mencoba menginstal Apache secara paksa sebag
      EXIT;
      ```
 
-   - Akses via Browser: Buka browser Anda (Chrome, Firefox, dll) dan ketikkan alamat IP server Anda diikuti dengan /phpmyadmin. Contoh: http://192.168.43.30/phpmyadmin/
+   - Akses via Browser: Buka browser Anda (Chrome, Firefox, dll) dan ketikkan alamat IP server Anda diikuti dengan /phpmyadmin. Contoh: http://192.168.43.30/phpmyadmin/ (jika di lokal localhost:8080/phpmyadmin/)
    - Masukkan Kredensial di Browser
      Username: admin
      Password: Admin123 (sesuai password yang di buat)
