@@ -1,11 +1,10 @@
 # instalasi-web-panel
 
 ## 🛠️ Teknologi yang Digunakan
-- **Backend:** Python/PHP/Node.js
 - **Framework:** Laravel 12
 - **Database:** MySQL
 - **Server:** Nginx
-- **OS:** Ubuntu 22.04 LTS
+- **OS:** Debian 12
 
 ## 📢 untuk domain disini sementara menggunakan prodi.ac.id karna belum memiliki domain pasti yang aktif, jadi jika domain yang di inginkan bukan prodi.ac.id, itu bisa diganti dengan nama domain lain.
 
