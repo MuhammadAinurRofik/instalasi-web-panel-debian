@@ -466,11 +466,6 @@ Debian 12 sudah menyertakan Python 3.11 sebagai versi bawaan sistem. Untuk versi
    ./configure --enable-optimizations
    make -j $(nproc)
    sudo make altinstall
-
-   # --- TAMBAHAN WAJIB UNTUK OPENCV & AI ---
-   # Library ini diperlukan agar OpenCV (cv2) bisa berjalan di server headless/Debian
-   sudo apt update
-   sudo apt install -y libgl1-mesa-glx libglib2.0-0 libsm6 libxext6 libxrender-dev
    ```
 
 3. Verifikasi Lokasi & Versi
@@ -479,6 +474,42 @@ Debian 12 sudah menyertakan Python 3.11 sebagai versi bawaan sistem. Untuk versi
    Python 3.10: python3.10 --version (Lokasi: /usr/local/bin/python3.10)
    Python 3.11: python3.11 --version (Lokasi: /usr/bin/python3.11)
    Python 3.12: python3.12 --version (Lokasi: /usr/local/bin/python3.12)
+   ```
+   
+4. Tambahan untuk OpenCV, AI, dan Hardware Kamera
+   Langkah ini sangat krusial agar OpenCV tidak error dan kamera dapat diakses oleh server.
+
+   ```bash
+   # Install library sistem untuk grafis dan pemrosesan gambar
+   sudo apt update
+   sudo apt install -y libgl1-mesa-glx libglib2.0-0 libsm6 libxext6 libxrender-dev
+   
+   # Install tools untuk verifikasi hardware kamera
+   sudo apt install -y v4l-utils fswebcam
+   ```
+
+5. Verifikasi Kamera
+   Gunakan perintah ini untuk melihat apakah kamera sudah terbaca oleh sistem:
+
+   ```bash
+   ls /dev/video*
+   ```
+   
+   (Hasil normal: /dev/video0 atau /dev/video1 muncul)
+
+   Jalankan perintah ini untuk memastikan kamera benar-benar bisa menangkap gambar (lampu kamera harus menyala):
+
+   ```bash
+   fswebcam -d /dev/video0 test_kamera.jpg
+   ```
+
+   Jika muncul tulisan "Writing JPEG image to 'test_kamera.jpg'", berarti hardware siap digunakan untuk aplikasi AI.
+
+   Agar user web (Nginx) bisa mengakses kamera tanpa error, jalankan perintah izin ini:
+
+   ```bash
+   sudo usermod -a -G video www-data
+   sudo chmod 666 /dev/video*
    ```
 
 ### 7. install composer
