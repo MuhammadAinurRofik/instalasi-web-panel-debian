@@ -483,6 +483,9 @@ Debian 12 sudah menyertakan Python 3.11 sebagai versi bawaan sistem. Untuk versi
    # Install library sistem untuk grafis dan pemrosesan gambar
    sudo apt update
    sudo apt install -y libgl1-mesa-glx libglib2.0-0 libsm6 libxext6 libxrender-dev
+
+   # Versi Universal untuk Debian/Ubuntu baru
+   sudo apt install -y libgl1 libglx-mesa0 libglib2.0-0 libsm6 libxext6 libxrender-dev
    
    # Install tools untuk verifikasi hardware kamera
    sudo apt install -y v4l-utils fswebcam
